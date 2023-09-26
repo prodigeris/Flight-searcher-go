@@ -21,6 +21,8 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    volumes:
+      - ./config/.rabbit-plugins:/etc/rabbitmq/enabled_plugins
     networks:
       - my_network
 
