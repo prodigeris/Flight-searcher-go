@@ -46,5 +46,17 @@ services:
       - "3331:3000"
     networks:
       - my_network
+  web-api:
+    image: golang:1.21
+    command: [ "go", "run", "./components/web-api" ]
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+    ports:
+      - "8181:8080"
+    working_dir: /app
+    networks:
+      - my_network
 networks:
   my_network:
