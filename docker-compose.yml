@@ -1,0 +1,48 @@
+version: '3'
+services:
+
+  db:
+    image: postgres:latest
+    container_name: my_postgres
+    environment:
+      POSTGRES_DB: 'flight-searcher'
+      POSTGRES_USER: 'arnas'
+      POSTGRES_PASSWORD: 'letsgoyeah'
+    ports:
+      - "5555:5432"
+    networks:
+      - my_network
+    volumes:
+      - ./.docker-data/.pg-data:/var/lib/postgresql/data
+
+  mq:
+    image: rabbitmq:latest
+    container_name: my_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - my_network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: my_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus-config.yml:/etc/prometheus/prometheus.yml
+#    depends_on:
+#      - go-service-1
+#      - go-service-2
+    networks:
+      - my_network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: my_grafana
+    ports:
+      - "3331:3000"
+    networks:
+      - my_network
+networks:
+  my_network:
