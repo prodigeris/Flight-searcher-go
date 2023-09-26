@@ -1,4 +1,4 @@
-module github.com/prodigeris/weekend-travel
+module github.com/prodigeris/Flight-searcher-go
 
 go 1.21.0
 
