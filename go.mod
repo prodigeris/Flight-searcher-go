@@ -11,7 +11,6 @@ require (
 	github.com/bojanz/currency v1.0.1 // indirect
 	github.com/cockroachdb/apd/v3 v3.0.1 // indirect
 	github.com/gorilla/schema v1.2.0 // indirect
-	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rickb777/date v1.17.0 // indirect
 	github.com/rickb777/plural v1.4.1 // indirect
