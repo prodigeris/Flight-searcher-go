@@ -90,3 +90,69 @@ func TestSortByPrice(t *testing.T) {
 		}
 	}
 }
+
+func TestGenerateItinerariesHomeAirports(t *testing.T) {
+	// Create some sample flight data
+	flights := []Flight{
+		{
+			FromAirport: "VNO",
+			ToAirport:   "RIX",
+			Price:       100,
+			FlightDate:  time.Now(),
+		},
+		{
+			FromAirport: "RIX",
+			ToAirport:   "VNO",
+			Price:       110,
+			FlightDate:  time.Now().AddDate(0, 0, 1),
+		},
+		{
+			FromAirport: "KUN",
+			ToAirport:   "RIX",
+			Price:       120,
+			FlightDate:  time.Now(),
+		},
+		{
+			FromAirport: "RIX",
+			ToAirport:   "KUN",
+			Price:       130,
+			FlightDate:  time.Now().AddDate(0, 0, 2),
+		},
+		{
+			FromAirport: "VNO",
+			ToAirport:   "RIX",
+			Price:       140,
+			FlightDate:  time.Now(),
+		},
+		{
+			FromAirport: "RIX",
+			ToAirport:   "KUN",
+			Price:       150,
+			FlightDate:  time.Now().AddDate(0, 0, 3),
+		},
+	}
+
+	// Define the home airports
+	homeAirports := map[string]bool{"VNO": true, "KUN": true}
+
+	// Generate itineraries
+	itineraries := generateItineraries(flights, 2)
+
+	// Assert that all itineraries start at home airports
+	for _, itinerary := range itineraries {
+		departureAirport := itinerary.DepartureFlight.FromAirport
+
+		if _, ok := homeAirports[departureAirport]; !ok {
+			t.Errorf("Itinerary does not start at a home airport: %s", departureAirport)
+		}
+	}
+
+	// Assert that all itineraries end at home airports
+	for _, itinerary := range itineraries {
+		returnAirport := itinerary.ReturnFlight.ToAirport
+
+		if _, ok := homeAirports[returnAirport]; !ok {
+			t.Errorf("Itinerary does not end at a home airport: %s", returnAirport)
+		}
+	}
+}
