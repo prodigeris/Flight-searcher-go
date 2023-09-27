@@ -36,9 +36,8 @@ func TestGetOffersReturnsExpectedOffers(t *testing.T) {
 	origin := "JFK"
 	destination := "LAX"
 	departureDate := time.Now()
-	returnDate := departureDate.Add(7 * 24 * time.Hour) // 7 days later
 
-	offers := getOffers(mockClient, origin, destination, departureDate, returnDate)
+	offers := getOffers(mockClient, origin, destination, departureDate, 5)
 
 	if len(offers) == 0 {
 		t.Errorf("Expected offers to be non-empty, but got empty offers")
