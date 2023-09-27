@@ -34,8 +34,9 @@ services:
     volumes:
       - ./config/prometheus-config.yml:/etc/prometheus/prometheus.yml
     depends_on:
-      - web-api
+      - offer-fetcher
       - flights-collector
+      - itinerary-analyzer
     networks:
       - my_network
 
@@ -46,29 +47,16 @@ services:
       - "3331:3000"
     networks:
       - my_network
-  web-api:
-    image: golang:1.21
-    command: [ "go", "run", "./components/web-api" ]
-    volumes:
-      - ./:/app
-    env_file:
-      - .env
-    ports:
-      - "8181:8080"
-    working_dir: /app
-    networks:
-      - my_network
-    depends_on:
-      - mq
-      - db
   flights-collector:
     image: golang:1.21
-    command: [ "go", "run", "./components/flights.go-collector" ]
+    command: [ "go", "run", "./components/flights-collector" ]
     volumes:
       - ./:/app
     env_file:
       - .env
     working_dir: /app
+    ports:
+      - "8181:8080"
     networks:
       - my_network
     depends_on:
@@ -95,6 +83,8 @@ services:
     env_file:
       - .env
     working_dir: /app
+    ports:
+      - "8282:8080"
     networks:
       - my_network
     depends_on:

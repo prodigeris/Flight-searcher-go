@@ -5,6 +5,7 @@ import (
 	"github.com/prodigeris/Flight-searcher-go/common"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -22,45 +23,44 @@ func main() {
 	defer func(conn *amqp.Connection) {
 		err := conn.Close()
 		if err != nil {
-
+			log.Printf("Failed to close RabbitMQ connection: %v", err)
 		}
 	}(conn)
 	defer func(ch *amqp.Channel) {
 		err := ch.Close()
 		if err != nil {
-
+			log.Printf("Failed to close RabbitMQ channel: %v", err)
 		}
 	}(ch)
 
-	common.DeclareQueue(ch, common.InquiriesQueue)
 	common.DeclareQueue(ch, common.OfferSearchQueue)
-
-	msgs, err := ch.Consume(
-		common.InquiriesQueue,
-		"",
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		log.Fatalf("Failed to register a consumer: %v", err)
-	}
 
 	stopChan := make(chan os.Signal, 1)
 	signal.Notify(stopChan, syscall.SIGINT, syscall.SIGTERM)
 
-	if err != nil {
-		log.Fatalf("Failed to open connection to DB: %v", err)
-	}
-
-	for msg := range msgs {
-		var inquiry Inquiry
-		err := json.Unmarshal(msg.Body, &inquiry)
-		if err != nil {
-			log.Printf("Failed to unmarshal message body: %v", err)
+	http.HandleFunc("/search", func(w http.ResponseWriter, r *http.Request) {
+		// Ensure the request method is POST
+		if r.Method != http.MethodPost {
+			http.Error(w, "Invalid request method. Only POST is allowed.", http.StatusMethodNotAllowed)
+			return
 		}
+
+		// Parse the request JSON
+		var inquiry Inquiry
+		decoder := json.NewDecoder(r.Body)
+		if err := decoder.Decode(&inquiry); err != nil {
+			http.Error(w, "Failed to decode JSON request", http.StatusBadRequest)
+			return
+		}
+
 		launchSearches(ch, inquiry.WeekendCount)
-	}
+		w.WriteHeader(http.StatusAccepted)
+	})
+
+	go func() {
+		// Start the HTTP server
+		log.Fatal(http.ListenAndServe(":8080", nil))
+	}()
+
+	<-stopChan
 }
