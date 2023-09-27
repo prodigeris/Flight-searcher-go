@@ -8,10 +8,15 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
-type Inquiry struct {
-	WeekendCount int `json:"weekend_count"`
+const OfferSearchQueue = "offer-searches"
+
+type Search struct {
+	FromAirport string    `json:"from-airport"`
+	ToAirport   string    `json:"to-airport"`
+	Date        time.Time `json:"date"`
 }
 
 func main() {
@@ -32,13 +37,12 @@ func main() {
 		}
 	}(ch)
 
-	common.DeclareQueue(ch, common.InquiriesQueue)
-	common.DeclareQueue(ch, common.OfferSearchQueue)
+	common.DeclareQueue(ch, OfferSearchQueue)
 
 	msgs, err := ch.Consume(
-		common.InquiriesQueue,
+		OfferSearchQueue,
 		"",
-		true,
+		false,
 		false,
 		false,
 		false,
@@ -51,16 +55,31 @@ func main() {
 	stopChan := make(chan os.Signal, 1)
 	signal.Notify(stopChan, syscall.SIGINT, syscall.SIGTERM)
 
+	db, err := common.GetDB()
 	if err != nil {
 		log.Fatalf("Failed to open connection to DB: %v", err)
 	}
 
 	for msg := range msgs {
-		var inquiry Inquiry
-		err := json.Unmarshal(msg.Body, &inquiry)
+		var search Search
+		err := json.Unmarshal(msg.Body, &search)
 		if err != nil {
 			log.Printf("Failed to unmarshal message body: %v", err)
 		}
-		launchSearches(ch, inquiry.WeekendCount)
+		err = consumeSearch(db, search)
+		if err != nil {
+			log.Printf("Nacking a message with error: %v", err)
+			err := msg.Nack(false, true)
+			if err != nil {
+				return
+			}
+		} else {
+			log.Printf("Acking a message: %v", search)
+			err = msg.Ack(false)
+			if err != nil {
+				return
+			}
+		}
+
 	}
 }

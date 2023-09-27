@@ -6,6 +6,9 @@ import (
 	"os"
 )
 
+const OfferSearchQueue = "offer-searches"
+const InquiriesQueue = "inquiries"
+
 func GetRabbitClient() (*amqp.Connection, *amqp.Channel, error) {
 	rabbitMQURL := os.Getenv("RABBITMQ_URL")
 
