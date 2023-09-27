@@ -63,7 +63,7 @@ services:
       - db
   flights-collector:
     image: golang:1.21
-    command: [ "go", "run", "./components/flights-collector" ]
+    command: [ "go", "run", "./components/flights.go-collector" ]
     volumes:
       - ./:/app
     env_file:
@@ -77,6 +77,19 @@ services:
   offer-fetcher:
     image: golang:1.21
     command: [ "go", "run", "./components/offer-fetcher" ]
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+    working_dir: /app
+    networks:
+      - my_network
+    depends_on:
+      - mq
+      - db
+  itinerary-analyzer:
+    image: golang:1.21
+    command: [ "go", "run", "./components/itinerary-analyzer" ]
     volumes:
       - ./:/app
     env_file:

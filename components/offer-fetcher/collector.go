@@ -11,7 +11,6 @@ import (
 )
 
 func getOffer(search Search) (int, error) {
-	//time.Sleep(1 * time.Second)
 	offers := getOffers(duffel.New(os.Getenv("DUFFEL_TOKEN")), search.FromAirport, search.ToAirport, search.Date, 5)
 	offerAmounts := make([]int, 0)
 	for _, offer := range offers {
