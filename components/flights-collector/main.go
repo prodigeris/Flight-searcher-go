@@ -53,12 +53,17 @@ func main() {
 	stopChan := make(chan os.Signal, 1)
 	signal.Notify(stopChan, syscall.SIGINT, syscall.SIGTERM)
 
+	db, err := common.GetDB()
+	if err != nil {
+		log.Fatalf("Failed to open connection to DB: %v", err)
+	}
+
 	for msg := range msgs {
 		var inquiry Inquiry
 		err := json.Unmarshal(msg.Body, &inquiry)
 		if err != nil {
 			log.Printf("Failed to unmarshal message body: %v", err)
 		}
-		go collect(inquiry.WeekendCount)
+		go collect(db, inquiry.WeekendCount)
 	}
 }

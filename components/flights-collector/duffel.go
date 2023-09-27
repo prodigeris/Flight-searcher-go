@@ -11,11 +11,10 @@ type duffelClient interface {
 }
 
 func getOffers(dfl duffelClient, origin string, destination string, departureDate time.Time) []duffel.Offer {
-	//dfl := duffel.New(os.Getenv("DUFFEL_TOKEN"))
 	maxConn := 0
 
 	input := duffel.OfferRequestInput{
-		Passengers: []duffel.OfferRequestPassenger{},
+		Passengers: []duffel.OfferRequestPassenger{{Age: 20}},
 		Slices: []duffel.OfferRequestSlice{
 			{Origin: origin, Destination: destination, DepartureDate: duffel.Date(departureDate)},
 		},

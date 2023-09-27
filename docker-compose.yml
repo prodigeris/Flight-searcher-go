@@ -58,6 +58,9 @@ services:
     working_dir: /app
     networks:
       - my_network
+    depends_on:
+      - mq
+      - db
   flights-collector:
     image: golang:1.21
     command: [ "go", "run", "./components/flights-collector" ]
@@ -68,6 +71,9 @@ services:
     working_dir: /app
     networks:
       - my_network
+    depends_on:
+      - mq
+      - db
   migrate:
     image: golang:1.21
     command: [ "go", "run", "./database/migrate.go" ]
@@ -78,5 +84,7 @@ services:
     working_dir: /app
     networks:
       - my_network
+    depends_on:
+      - db
 networks:
   my_network:
