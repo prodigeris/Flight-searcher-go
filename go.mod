@@ -13,6 +13,7 @@ require (
 	github.com/gorilla/schema v1.2.0 // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/rabbitmq/amqp091-go v1.8.1 // indirect
 	github.com/rickb777/date v1.17.0 // indirect
 	github.com/rickb777/plural v1.4.1 // indirect
 	github.com/segmentio/asm v1.1.3 // indirect
