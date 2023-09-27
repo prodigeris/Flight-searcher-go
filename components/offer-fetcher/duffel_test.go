@@ -9,7 +9,7 @@ import (
 
 type mockDuffelClient struct{}
 
-func (m *mockDuffelClient) CreateOfferRequest(ctx context.Context, input duffel.OfferRequestInput) (*duffel.OfferRequest, error) {
+func (m *mockDuffelClient) CreateOfferRequest(_ context.Context, _ duffel.OfferRequestInput) (*duffel.OfferRequest, error) {
 	return &duffel.OfferRequest{
 		Offers: []duffel.Offer{
 			{
