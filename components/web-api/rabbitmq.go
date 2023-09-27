@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -18,5 +19,7 @@ func publishInquiry(ch *amqp.Channel, inquiry Inquiry) error {
 		ContentType: "application/json",
 		Body:        inquiryJSON,
 	})
+
+	fmt.Println("Published a message", inquiryJSON)
 	return err
 }

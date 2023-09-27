@@ -1,4 +1,4 @@
-package components
+package main
 
 func GetVilniusToCodes() []string {
 	return []string{

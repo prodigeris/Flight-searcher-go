@@ -33,9 +33,9 @@ services:
       - "9090:9090"
     volumes:
       - ./config/prometheus-config.yml:/etc/prometheus/prometheus.yml
-#    depends_on:
-#      - go-service-1
-#      - go-service-2
+    depends_on:
+      - web-api
+      - flights-collector
     networks:
       - my_network
 
@@ -55,6 +55,16 @@ services:
       - .env
     ports:
       - "8181:8080"
+    working_dir: /app
+    networks:
+      - my_network
+  flights-collector:
+    image: golang:1.21
+    command: [ "go", "run", "./components/flights-collector" ]
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
     working_dir: /app
     networks:
       - my_network
