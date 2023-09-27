@@ -1,24 +1,38 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"github.com/prodigeris/Flight-searcher-go/common"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 )
 
 const InquiriesQueue = "inquiries"
+
+type Inquiry struct {
+	WeekendCount int `json:"weekend_count"`
+}
 
 func main() {
 	conn, ch, err := common.GetRabbitClient()
 	if err != nil {
 		log.Fatalf("Failed to initialize RabbitMQ client: %v", err)
 	}
-	defer conn.Close()
-	defer ch.Close()
+	defer func(conn *amqp.Connection) {
+		err := conn.Close()
+		if err != nil {
+
+		}
+	}(conn)
+	defer func(ch *amqp.Channel) {
+		err := ch.Close()
+		if err != nil {
+
+		}
+	}(ch)
 
 	common.DeclareQueue(ch, InquiriesQueue)
 
@@ -40,12 +54,11 @@ func main() {
 	signal.Notify(stopChan, syscall.SIGINT, syscall.SIGTERM)
 
 	for msg := range msgs {
-		fmt.Printf("Received a message: %s\n", msg.Body)
-
-		// Simulate some processing time
-		time.Sleep(2 * time.Second)
-
-		// Acknowledge the message (manual ack)
-		msg.Ack(false)
+		var inquiry Inquiry
+		err := json.Unmarshal(msg.Body, &inquiry)
+		if err != nil {
+			log.Printf("Failed to unmarshal message body: %v", err)
+		}
+		go collect(inquiry.WeekendCount)
 	}
 }

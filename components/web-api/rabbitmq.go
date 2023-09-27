@@ -20,6 +20,6 @@ func publishInquiry(ch *amqp.Channel, inquiry Inquiry) error {
 		Body:        inquiryJSON,
 	})
 
-	fmt.Println("Published a message", inquiryJSON)
+	fmt.Println("Published a message", inquiry)
 	return err
 }

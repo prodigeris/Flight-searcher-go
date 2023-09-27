@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS flights (
                                        UNIQUE (from_airport, to_airport, flight_date)
 );
 
-CREATE TABLE IF NOT EXISTS itinerary (
+CREATE TABLE IF NOT EXISTS itineraries (
                                          id SERIAL PRIMARY KEY,
                                          departure_id INT,
                                          return_id INT,

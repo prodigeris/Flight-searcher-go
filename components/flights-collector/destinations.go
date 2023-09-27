@@ -1,5 +1,10 @@
 package main
 
+type Flight struct {
+	FromAirport string
+	ToAirport   string
+}
+
 func GetVilniusToCodes() []string {
 	return []string{
 		"WAW",
@@ -88,4 +93,27 @@ func GetKaunasToCodes() []string {
 		"PMI",
 		"RHO",
 	}
+}
+
+func GetAllDeparturesAndArrivals() ([]Flight, []Flight) {
+	kaunasDestinations := GetKaunasToCodes()
+	vilniusDestinations := GetVilniusToCodes()
+	var departures []Flight
+	var arrivals []Flight
+
+	for _, kaunasDestination := range kaunasDestinations {
+		departures = append(departures, Flight{FromAirport: "KUN", ToAirport: kaunasDestination})
+	}
+	for _, vilniusDestination := range vilniusDestinations {
+		departures = append(departures, Flight{FromAirport: "VNO", ToAirport: vilniusDestination})
+	}
+
+	for _, kaunasDestination := range kaunasDestinations {
+		arrivals = append(arrivals, Flight{FromAirport: kaunasDestination, ToAirport: "KUN"})
+	}
+	for _, vilniusDestination := range vilniusDestinations {
+		arrivals = append(arrivals, Flight{FromAirport: vilniusDestination, ToAirport: "VNO"})
+	}
+
+	return departures, arrivals
 }

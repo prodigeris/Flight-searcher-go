@@ -68,5 +68,15 @@ services:
     working_dir: /app
     networks:
       - my_network
+  migrate:
+    image: golang:1.21
+    command: [ "go", "run", "./database/migrate.go" ]
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
+    working_dir: /app
+    networks:
+      - my_network
 networks:
   my_network:
