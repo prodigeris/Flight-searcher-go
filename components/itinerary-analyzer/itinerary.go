@@ -30,6 +30,11 @@ func generateItineraries(flights []Flight, maxDaysDifference int) []Itinerary {
 				continue
 			}
 
+			if departure.FlightDate.After(returnFlight.FlightDate) {
+				// departure is after the return
+				continue
+			}
+
 			itinerary := Itinerary{
 				DepartureFlight: departure,
 				ReturnFlight:    returnFlight,

@@ -92,7 +92,6 @@ func TestSortByPrice(t *testing.T) {
 }
 
 func TestGenerateItinerariesHomeAirports(t *testing.T) {
-	// Create some sample flight data
 	flights := []Flight{
 		{
 			FromAirport: "VNO",
@@ -155,4 +154,63 @@ func TestGenerateItinerariesHomeAirports(t *testing.T) {
 			t.Errorf("Itinerary does not end at a home airport: %s", returnAirport)
 		}
 	}
+}
+
+func TestReturnFlightsAlwaysAfterDeparture(t *testing.T) {
+	t.Run("DepartureBeforeReturn", func(t *testing.T) {
+
+		flights := []Flight{
+			{
+				FromAirport: "VNO",
+				ToAirport:   "RIX",
+				Price:       100,
+				FlightDate:  time.Now(),
+			},
+			{
+				FromAirport: "RIX",
+				ToAirport:   "VNO",
+				Price:       110,
+				FlightDate:  time.Now().AddDate(0, 0, 1).Add(time.Hour * 2),
+			},
+			{
+				FromAirport: "KUN",
+				ToAirport:   "RIX",
+				Price:       120,
+				FlightDate:  time.Now().AddDate(0, 0, 2),
+			},
+			{
+				FromAirport: "RIX",
+				ToAirport:   "KUN",
+				Price:       130,
+				FlightDate:  time.Now().AddDate(0, 0, 4),
+			},
+			{
+				FromAirport: "VNO",
+				ToAirport:   "KUN",
+				Price:       140,
+				FlightDate:  time.Now().AddDate(0, 0, 1),
+			},
+			{
+				FromAirport: "KUN",
+				ToAirport:   "VNO",
+				Price:       150,
+				FlightDate:  time.Now().AddDate(0, 0, 3),
+			},
+		}
+
+		maxDaysDifference := 5
+		itineraries := generateItineraries(flights, maxDaysDifference)
+
+		for _, itinerary := range itineraries {
+			if itinerary.DepartureFlight.FlightDate.After(itinerary.ReturnFlight.FlightDate) {
+				t.Errorf(
+					"Departure date %s is after return date %s for itinerary from %s to %s",
+					itinerary.DepartureFlight.FlightDate,
+					itinerary.ReturnFlight.FlightDate,
+					itinerary.DepartureFlight.FromAirport,
+					itinerary.ReturnFlight.ToAirport,
+				)
+			}
+		}
+	})
 }
