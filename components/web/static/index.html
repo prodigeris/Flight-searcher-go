@@ -101,10 +101,12 @@
                 <table>
                     <thead>
                     <tr>
-                        <th>Departure</th>
+                        <th>From</th>
+                        <th>To</th>
                         <th>Return</th>
+                        <th>Departure Date</th>
+                        <th>Return Date</th>
                         <th>Price</th>
-                        <th>Dates</th>
                     </tr>
                     </thead>
                     <tbody id="itineraryList"></tbody>
@@ -143,10 +145,12 @@
 
                     const row = document.createElement("tr");
                     row.innerHTML = `
-                        <td>${itinerary.DepartureFlight.FromAirport} - ${itinerary.DepartureFlight.ToAirport}</td>
+                        <td>${itinerary.DepartureFlight.FromAirport}</td>
+                        <td>${itinerary.DepartureFlight.ToAirport}</td>
                         <td>${itinerary.ReturnFlight.ToAirport}</td>
-                        <td>${(itinerary.TotalPrice / 100).toFixed(2)} EUR</td>
-                        <td>${formattedDepartureDate} - ${formattedReturnDate}</td>
+                        <td>${formattedDepartureDate}</td>
+                        <td>${formattedReturnDate}</td>
+                        <td>${(itinerary.TotalPrice / 100).toFixed(2)} €</td>
                     `;
 
                     itineraryList.appendChild(row);
