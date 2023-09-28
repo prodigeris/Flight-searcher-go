@@ -126,6 +126,8 @@
 </div>
 
 <script>
+    let dataTable; // Declare a variable to store the DataTable instance
+
     // Function to fetch and display itineraries
     function fetchItineraries() {
         fetch("http://localhost:8282/itineraries") // Updated URL here
@@ -161,8 +163,15 @@
                     itineraryList.appendChild(row);
                 });
 
-                // Initialize DataTable
-                $('#itineraryTable').DataTable();
+                // Destroy the DataTable instance if it already exists
+                if (dataTable) {
+                    dataTable.destroy();
+                }
+
+                // Initialize DataTable and save the instance to the variable
+                dataTable = $('#itineraryTable').DataTable({
+                    paging: true // Enable pagination
+                });
             })
             .catch(error => console.error(error));
     }
