@@ -36,7 +36,9 @@ The migrate service will automatically handle the database migrations.
 ### Accessing the Services:
 
 Flight Searcher Application: http://127.0.0.1:8383/
+
 Grafana: http://127.0.0.1:3331/
+
 Prometheus: http://127.0.0.1:9090/
 
 ### Usage
