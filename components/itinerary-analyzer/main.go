@@ -3,19 +3,30 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/prodigeris/Flight-searcher-go/common"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	"github.com/prodigeris/Flight-searcher-go/common"
+	"github.com/rs/cors"
 )
 
 func main() {
+	r := mux.NewRouter()
 
-	db, err := common.GetDB()
-	if err != nil {
-		log.Fatalf("Failed to open connection to DB: %v", err)
-	}
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"}, // Allow requests from any origin
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders: []string{"Content-Type", "Authorization"},
+	})
 
-	http.HandleFunc("/itineraries", func(w http.ResponseWriter, r *http.Request) {
+	handler := c.Handler(r)
+
+	r.HandleFunc("/itineraries", func(w http.ResponseWriter, r *http.Request) {
+		db, err := common.GetDB()
+		if err != nil {
+			log.Fatalf("Failed to open connection to DB: %v", err)
+		}
 
 		flights, err := getFlights(db)
 		if err != nil {
@@ -31,10 +42,12 @@ func main() {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-
-		w.Write(jsonResponse)
+		_, err = w.Write(jsonResponse)
+		if err != nil {
+			return
+		}
 	})
 
 	fmt.Println("Server listening on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }

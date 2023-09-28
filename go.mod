@@ -10,12 +10,14 @@ require (
 require (
 	github.com/bojanz/currency v1.0.1 // indirect
 	github.com/cockroachdb/apd/v3 v3.0.1 // indirect
+	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/schema v1.2.0 // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rabbitmq/amqp091-go v1.8.1 // indirect
 	github.com/rickb777/date v1.17.0 // indirect
 	github.com/rickb777/plural v1.4.1 // indirect
+	github.com/rs/cors v1.10.0 // indirect
 	github.com/segmentio/asm v1.1.3 // indirect
 	github.com/segmentio/encoding v0.3.4 // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect

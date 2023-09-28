@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"github.com/prodigeris/Flight-searcher-go/common"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/rs/cors"
 	"log"
 	"net/http"
 	"os"
@@ -38,7 +40,17 @@ func main() {
 	stopChan := make(chan os.Signal, 1)
 	signal.Notify(stopChan, syscall.SIGINT, syscall.SIGTERM)
 
-	http.HandleFunc("/search", func(w http.ResponseWriter, r *http.Request) {
+	r := mux.NewRouter()
+
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"}, // Allow requests from any origin
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders: []string{"Content-Type", "Authorization"},
+	})
+
+	handler := c.Handler(r)
+
+	r.HandleFunc("/search", func(w http.ResponseWriter, r *http.Request) {
 		// Ensure the request method is POST
 		if r.Method != http.MethodPost {
 			http.Error(w, "Invalid request method. Only POST is allowed.", http.StatusMethodNotAllowed)
@@ -59,7 +71,7 @@ func main() {
 
 	go func() {
 		// Start the HTTP server
-		log.Fatal(http.ListenAndServe(":8080", nil))
+		log.Fatal(http.ListenAndServe(":8080", handler))
 	}()
 
 	<-stopChan
