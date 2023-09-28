@@ -98,19 +98,21 @@
         <div class="col-md-6">
             <div class="card">
                 <h2>Itineraries</h2>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>From</th>
-                        <th>To</th>
-                        <th>Return</th>
-                        <th>Departure Date</th>
-                        <th>Return Date</th>
-                        <th>Price</th>
-                    </tr>
-                    </thead>
-                    <tbody id="itineraryList"></tbody>
-                </table>
+                <div class="table-responsive"> <!-- Add this class for responsive table -->
+                    <table class="table table-striped"> <!-- Use Bootstrap table classes -->
+                        <thead>
+                        <tr>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Return</th>
+                            <th>Departure Date</th>
+                            <th>Return Date</th>
+                            <th>Price</th>
+                        </tr>
+                        </thead>
+                        <tbody id="itineraryList"></tbody>
+                    </table>
+                </div>
                 <button id="refreshButton" class="btn btn-success">Refresh</button>
             </div>
         </div>
