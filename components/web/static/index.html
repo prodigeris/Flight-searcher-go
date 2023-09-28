@@ -50,6 +50,27 @@
         #refreshButton:hover {
             background-color: #1e7e34;
         }
+
+        /* Styling for the itinerary table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 <body>
@@ -77,7 +98,17 @@
         <div class="col-md-6">
             <div class="card">
                 <h2>Itineraries</h2>
-                <ul id="itineraryList"></ul>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Departure</th>
+                        <th>Return</th>
+                        <th>Price</th>
+                        <th>Dates</th>
+                    </tr>
+                    </thead>
+                    <tbody id="itineraryList"></tbody>
+                </table>
                 <button id="refreshButton" class="btn btn-success">Refresh</button>
             </div>
         </div>
@@ -102,11 +133,23 @@
                 const itineraryList = document.getElementById("itineraryList");
                 itineraryList.innerHTML = "";
 
-                // Loop through the itineraries and add them to the list
+                // Loop through the itineraries and add them to the table
                 limitedData.forEach(itinerary => {
-                    const listItem = document.createElement("li");
-                    listItem.textContent = `${itinerary.DepartureFlight.FromAirport} - ${itinerary.DepartureFlight.ToAirport} - ${itinerary.ReturnFlight.ToAirport}, Price: ${itinerary.TotalPrice/100} EUR`;
-                    itineraryList.appendChild(listItem);
+                    const departureDate = new Date(itinerary.DepartureFlight.FlightDate);
+                    const returnDate = new Date(itinerary.ReturnFlight.FlightDate);
+
+                    const formattedDepartureDate = `${(departureDate.getMonth() + 1).toString().padStart(2, '0')}-${departureDate.getDate().toString().padStart(2, '0')}`;
+                    const formattedReturnDate = `${(returnDate.getMonth() + 1).toString().padStart(2, '0')}-${returnDate.getDate().toString().padStart(2, '0')}`;
+
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${itinerary.DepartureFlight.FromAirport} - ${itinerary.DepartureFlight.ToAirport}</td>
+                        <td>${itinerary.ReturnFlight.ToAirport}</td>
+                        <td>${(itinerary.TotalPrice / 100).toFixed(2)} EUR</td>
+                        <td>${formattedDepartureDate} - ${formattedReturnDate}</td>
+                    `;
+
+                    itineraryList.appendChild(row);
                 });
             })
             .catch(error => console.error(error));
@@ -137,14 +180,14 @@
                 "Content-Type": "application/json"
             }
         })
-        .then(response => {
-            if (response.status === 202) {
-                // Handle successful POST request
-            } else {
-                // Handle other status codes
-            }
-        })
-        .catch(error => console.error(error));
+            .then(response => {
+                if (response.status === 202) {
+                    // Handle successful POST request
+                } else {
+                    // Handle other status codes
+                }
+            })
+            .catch(error => console.error(error));
     });
 </script>
 </body>

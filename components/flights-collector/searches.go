@@ -17,17 +17,19 @@ type Search struct {
 
 func launchSearches(ch *amqp.Channel, weekendCount int) {
 	fmt.Println("Starting to consume inquiry for weekend count: ", weekendCount)
-	dFlights, aFlights := GetAllDeparturesAndArrivals()
-	friday, sunday := nextFridayAndSunday(time.Now())
-	searches := make([]Search, 0)
-	for _, flight := range dFlights {
-		searches = append(searches, Search{FromAirport: flight.FromAirport, ToAirport: flight.ToAirport, Date: friday})
-	}
-	for _, flight := range aFlights {
-		searches = append(searches, Search{FromAirport: flight.FromAirport, ToAirport: flight.ToAirport, Date: sunday})
-	}
-	for _, search := range searches {
-		publishSearch(ch, search)
+	for i := 0; i < weekendCount; i++ {
+		dFlights, aFlights := GetAllDeparturesAndArrivals()
+		friday, sunday := nextFridayAndSunday(time.Now().AddDate(0, 0, i*7))
+		searches := make([]Search, 0)
+		for _, flight := range dFlights {
+			searches = append(searches, Search{FromAirport: flight.FromAirport, ToAirport: flight.ToAirport, Date: friday})
+		}
+		for _, flight := range aFlights {
+			searches = append(searches, Search{FromAirport: flight.FromAirport, ToAirport: flight.ToAirport, Date: sunday})
+		}
+		for _, search := range searches {
+			publishSearch(ch, search)
+		}
 	}
 }
 
