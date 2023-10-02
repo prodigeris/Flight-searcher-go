@@ -23,3 +23,12 @@ jobs:
 
     - name: Test web
       run: cd components/web && go test && cd ../../
+
+    - name: Test flights-collector
+      run: cd components/flights-collector && go test && cd ../../
+
+    - name: Test itinerary-analyzer
+      run: cd components/itinerary-analyzer && go test && cd ../../
+
+    - name: Test offer-fetcher
+      run: cd components/itinerary-analyzer && go test && cd ../../
