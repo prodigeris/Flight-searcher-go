@@ -3,11 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/prodigeris/Flight-searcher-go/common"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/prodigeris/Flight-searcher-go/common"
 	"github.com/rs/cors"
 )
 
