@@ -8,13 +8,3 @@ CREATE TABLE IF NOT EXISTS flights (
                                        created_at TIMESTAMP NOT NULL,
                                        UNIQUE (from_airport, to_airport, flight_date)
 );
-
-CREATE TABLE IF NOT EXISTS itineraries (
-                                         id SERIAL PRIMARY KEY,
-                                         departure_id INT,
-                                         return_id INT,
-                                         updated_at TIMESTAMP NULL,
-                                         created_at TIMESTAMP NOT NULL,
-                                         FOREIGN KEY (departure_id) REFERENCES flights(id),
-                                         FOREIGN KEY (return_id) REFERENCES flights(id)
-);
