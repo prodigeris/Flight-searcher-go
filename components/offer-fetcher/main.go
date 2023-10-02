@@ -1,8 +1,9 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
-	"github.com/prodigeris/Flight-searcher-go/common"
+	"fmt"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
 	"os"
@@ -11,8 +12,6 @@ import (
 	"time"
 )
 
-const OfferSearchQueue = "offer-searches"
-
 type Search struct {
 	FromAirport string    `json:"from-airport"`
 	ToAirport   string    `json:"to-airport"`
@@ -20,7 +19,7 @@ type Search struct {
 }
 
 func main() {
-	conn, ch, err := common.GetRabbitClient()
+	conn, ch, err := getRabbitClient()
 	if err != nil {
 		log.Fatalf("Failed to initialize RabbitMQ client: %v", err)
 	}
@@ -37,7 +36,7 @@ func main() {
 		}
 	}(ch)
 
-	common.DeclareQueue(ch, OfferSearchQueue)
+	declareQueue(ch, OfferSearchQueue)
 
 	msgs, err := ch.Consume(
 		OfferSearchQueue,
@@ -55,7 +54,7 @@ func main() {
 	stopChan := make(chan os.Signal, 1)
 	signal.Notify(stopChan, syscall.SIGINT, syscall.SIGTERM)
 
-	db, err := common.GetDB()
+	db, err := getDB()
 	if err != nil {
 		log.Fatalf("Failed to open connection to DB: %v", err)
 	}
@@ -82,4 +81,34 @@ func main() {
 		}
 
 	}
+}
+
+func getDB() (*sql.DB, error) {
+	pgHost := os.Getenv("PGHOST")
+	pgPort := os.Getenv("PGPORT")
+	pgUser := os.Getenv("PGUSER")
+	pgPassword := os.Getenv("PGPASSWORD")
+	pgDBName := os.Getenv("PGDATABASE")
+	pgSSLMode := os.Getenv("PGDATABASE_SSLMODE")
+
+	connStr := fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		pgHost, pgPort, pgUser, pgPassword, pgDBName, pgSSLMode,
+	)
+
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.Ping()
+	if err != nil {
+		err := db.Close()
+		if err != nil {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	return db, nil
 }

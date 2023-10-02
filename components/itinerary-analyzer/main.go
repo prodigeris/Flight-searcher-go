@@ -1,9 +1,9 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/prodigeris/Flight-searcher-go/common"
 	"log"
 	"net/http"
 	"os"
@@ -50,7 +50,7 @@ func corsOptions() cors.Options {
 
 func itineraries() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		db, err := common.GetDB()
+		db, err := getDB()
 		if err != nil {
 			log.Fatalf("Failed to open connection to DB: %v", err)
 		}
@@ -74,4 +74,34 @@ func itineraries() func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+}
+
+func getDB() (*sql.DB, error) {
+	pgHost := os.Getenv("PGHOST")
+	pgPort := os.Getenv("PGPORT")
+	pgUser := os.Getenv("PGUSER")
+	pgPassword := os.Getenv("PGPASSWORD")
+	pgDBName := os.Getenv("PGDATABASE")
+	pgSSLMode := os.Getenv("PGDATABASE_SSLMODE")
+
+	connStr := fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		pgHost, pgPort, pgUser, pgPassword, pgDBName, pgSSLMode,
+	)
+
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.Ping()
+	if err != nil {
+		err := db.Close()
+		if err != nil {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	return db, nil
 }

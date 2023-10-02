@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"github.com/prodigeris/Flight-searcher-go/common"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/cors"
 	"log"
@@ -18,7 +17,7 @@ type Inquiry struct {
 }
 
 func main() {
-	conn, ch, err := common.GetRabbitClient()
+	conn, ch, err := getRabbitClient()
 	if err != nil {
 		log.Fatalf("Failed to initialize RabbitMQ client: %v", err)
 	}
@@ -35,7 +34,7 @@ func main() {
 		}
 	}(ch)
 
-	common.DeclareQueue(ch, common.OfferSearchQueue)
+	declareQueue(ch, OfferSearchQueue)
 
 	stopChan := make(chan os.Signal, 1)
 	signal.Notify(stopChan, syscall.SIGINT, syscall.SIGTERM)

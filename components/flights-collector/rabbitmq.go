@@ -1,4 +1,4 @@
-package common
+package main
 
 import (
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -7,9 +7,8 @@ import (
 )
 
 const OfferSearchQueue = "offer-searches"
-const InquiriesQueue = "inquiries"
 
-func GetRabbitClient() (*amqp.Connection, *amqp.Channel, error) {
+func getRabbitClient() (*amqp.Connection, *amqp.Channel, error) {
 	rabbitMQURL := os.Getenv("RABBITMQ_URL")
 
 	conn, err := amqp.Dial(rabbitMQURL)
@@ -28,7 +27,7 @@ func GetRabbitClient() (*amqp.Connection, *amqp.Channel, error) {
 	return conn, ch, nil
 }
 
-func DeclareQueue(ch *amqp.Channel, name string) {
+func declareQueue(ch *amqp.Channel, name string) {
 	_, err := ch.QueueDeclare(
 		name, // Queue name
 		false,
