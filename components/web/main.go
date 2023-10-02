@@ -13,7 +13,6 @@ type Config struct {
 }
 
 func main() {
-	fmt.Println("Starting WEB service")
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		config := Config{
 			ItineraryAnalyzerHost: os.Getenv("ITINERARY_ANALYZER_HOST"),
@@ -30,6 +29,7 @@ func main() {
 		}
 	})
 
+	fmt.Println("Starting WEB service on port 8080")
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		panic(err)
