@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"os"
@@ -12,6 +13,7 @@ type Config struct {
 }
 
 func main() {
+	fmt.Println("Starting WEB service")
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		config := Config{
 			ItineraryAnalyzerHost: os.Getenv("ITINERARY_ANALYZER_HOST"),
