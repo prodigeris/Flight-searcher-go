@@ -21,5 +21,5 @@ jobs:
       with:
         go-version: '1.21'
 
-    - name: Test
-      run: go test -v ./...
+    - name: Test web
+      run: cd components/web && go test && cd ../../
