@@ -35,7 +35,7 @@ func main() {
 func health() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		_, err := w.Write([]byte("OK"))
+		_, err := w.Write([]byte("OK!"))
 		if err != nil {
 			return
 		}
