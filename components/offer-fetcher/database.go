@@ -9,6 +9,7 @@ import (
 )
 
 func insertFlight(db *sql.DB, fromAirport, toAirport string, price int, flightDate time.Time) error {
+	fmt.Println("Inserting flight", fromAirport, toAirport, price, flightDate)
 	stmt, err := db.Prepare("INSERT INTO flights (from_airport, to_airport, price, flight_date, created_at) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (from_airport, to_airport, flight_date) DO UPDATE SET price = $3, updated_at = $5")
 	if err != nil {
 		return err
