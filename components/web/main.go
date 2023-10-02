@@ -32,7 +32,7 @@ func index() func(w http.ResponseWriter, r *http.Request) {
 			ItineraryAnalyzerHost: os.Getenv("ITINERARY_ANALYZER_HOST"),
 			FlightsCollectorHost:  os.Getenv("FLIGHTS_COLLECTOR_HOST"),
 		}
-		tmpl, err := template.ParseFiles("components/web/static/index.html")
+		tmpl, err := template.ParseFiles("static/index.html")
 		if err != nil {
 			http.Error(w, "Could not load template", http.StatusInternalServerError)
 			return
