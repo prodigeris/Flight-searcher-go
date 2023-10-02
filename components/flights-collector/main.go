@@ -49,14 +49,24 @@ func main() {
 
 	handler := c.Handler(r)
 
-	r.HandleFunc("/search", func(w http.ResponseWriter, r *http.Request) {
-		// Ensure the request method is POST
+	r.HandleFunc("/search", search(ch))
+
+	r.HandleFunc("/health", health())
+
+	go func() {
+		log.Fatal(http.ListenAndServe(":8080", handler))
+	}()
+
+	<-stopChan
+}
+
+func search(ch *amqp.Channel) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Invalid request method. Only POST is allowed.", http.StatusMethodNotAllowed)
 			return
 		}
 
-		// Parse the request JSON
 		var inquiry Inquiry
 		decoder := json.NewDecoder(r.Body)
 		if err := decoder.Decode(&inquiry); err != nil {
@@ -66,12 +76,15 @@ func main() {
 
 		launchSearches(ch, inquiry.WeekendCount)
 		w.WriteHeader(http.StatusAccepted)
-	})
+	}
+}
 
-	go func() {
-		// Start the HTTP server
-		log.Fatal(http.ListenAndServe(":8080", handler))
-	}()
-
-	<-stopChan
+func health() func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, err := w.Write([]byte("OK!"))
+		if err != nil {
+			return
+		}
+	}
 }
