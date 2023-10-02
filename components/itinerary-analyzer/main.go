@@ -10,6 +10,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
