@@ -130,7 +130,7 @@
 
     // Function to fetch and display itineraries
     function fetchItineraries() {
-        fetch("http://localhost:8282/itineraries") // Updated URL here
+        fetch("{{.ItineraryAnalyzerHost}}/itineraries") // Updated URL here
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`Network response was not ok (${response.status})`);
@@ -192,7 +192,7 @@
 
         const weekendCount = parseInt(document.getElementById("weekend_count").value);
 
-        fetch("http://localhost:8181/search", {
+        fetch("{{.FlightsCollectorHost}}/search", {
             method: "POST",
             body: JSON.stringify({
                 "weekend_count": weekendCount
