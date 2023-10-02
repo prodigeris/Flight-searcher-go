@@ -12,7 +12,7 @@ func main() {
 
 	db, err := getDB()
 	if err != nil {
-		log.Fatal("Cannot connect to the database")
+		log.Fatal("Cannot connect to the database", err)
 	}
 
 	sqlFile, err := os.ReadFile("schema.sql")
