@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/cors"
@@ -50,11 +51,17 @@ func main() {
 	handler := c.Handler(r)
 
 	r.HandleFunc("/search", search(ch))
-
 	r.HandleFunc("/health", health())
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	fmt.Printf("Starting Flights Collector service on port %s", port)
+
 	go func() {
-		log.Fatal(http.ListenAndServe(":8080", handler))
+		log.Fatal(http.ListenAndServe(":"+port, handler))
 	}()
 
 	<-stopChan
