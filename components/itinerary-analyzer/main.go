@@ -20,6 +20,7 @@ func main() {
 	handler := c.Handler(r)
 
 	r.HandleFunc("/itineraries", itineraries())
+	r.HandleFunc("/health", health())
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -27,6 +28,16 @@ func main() {
 	}
 	fmt.Printf("Server listening on : %v\n", port)
 	log.Fatal(http.ListenAndServe(":"+port, handler))
+}
+
+func health() func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, err := w.Write([]byte("OK"))
+		if err != nil {
+			return
+		}
+	}
 }
 
 func corsOptions() cors.Options {

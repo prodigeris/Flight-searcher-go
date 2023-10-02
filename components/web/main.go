@@ -18,11 +18,22 @@ func main() {
 		port = "8080"
 	}
 	http.HandleFunc("/", index())
+	http.HandleFunc("/health", health())
 
 	fmt.Printf("Starting WEB service on port %s", port)
 	err := http.ListenAndServe(":"+port, nil)
 	if err != nil {
 		panic(err)
+	}
+}
+
+func health() func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, err := w.Write([]byte("OK"))
+		if err != nil {
+			return
+		}
 	}
 }
 
