@@ -43,6 +43,8 @@ func getDB() (*sql.DB, error) {
 		pgHost, pgPort, pgUser, pgPassword, pgDBName, pgSSLMode,
 	)
 
+	fmt.Println("Trying to open", connStr)
+
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
