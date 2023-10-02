@@ -17,7 +17,7 @@ func main() {
 		log.Fatal("Cannot connect to the database")
 	}
 
-	sqlFile, err := os.ReadFile("database/schema.sql")
+	sqlFile, err := os.ReadFile("schema.sql")
 	if err != nil {
 		log.Fatal(err)
 	}
