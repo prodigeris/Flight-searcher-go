@@ -13,7 +13,21 @@ type Config struct {
 }
 
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	http.HandleFunc("/", index())
+
+	fmt.Printf("Starting WEB service on port %s", port)
+	err := http.ListenAndServe(":"+port, nil)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func index() func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		config := Config{
 			ItineraryAnalyzerHost: os.Getenv("ITINERARY_ANALYZER_HOST"),
 			FlightsCollectorHost:  os.Getenv("FLIGHTS_COLLECTOR_HOST"),
@@ -27,11 +41,5 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-	})
-
-	fmt.Println("Starting WEB service on port 8080")
-	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
-		panic(err)
 	}
 }
