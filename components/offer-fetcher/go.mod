@@ -1,6 +1,6 @@
 module github.com/prodigeris/Flight-searcher-go/offer-fetcher
 
-go 1.21.0
+go 1.21
 
 require (
 	github.com/airheartdev/duffel v0.4.6
