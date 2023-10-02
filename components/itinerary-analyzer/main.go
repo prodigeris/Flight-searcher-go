@@ -6,6 +6,7 @@ import (
 	"github.com/prodigeris/Flight-searcher-go/common"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -14,15 +15,30 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"}, // Allow requests from any origin
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
-		AllowedHeaders: []string{"Content-Type", "Authorization"},
-	})
+	c := cors.New(corsOptions())
 
 	handler := c.Handler(r)
 
-	r.HandleFunc("/itineraries", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/itineraries", itineraries())
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	fmt.Printf("Server listening on : %v\n", port)
+	log.Fatal(http.ListenAndServe(":"+port, handler))
+}
+
+func corsOptions() cors.Options {
+	return cors.Options{
+		AllowedOrigins: []string{"*"}, // Allow requests from any origin
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders: []string{"Content-Type", "Authorization"},
+	}
+}
+
+func itineraries() func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		db, err := common.GetDB()
 		if err != nil {
 			log.Fatalf("Failed to open connection to DB: %v", err)
@@ -46,8 +62,5 @@ func main() {
 		if err != nil {
 			return
 		}
-	})
-
-	fmt.Println("Server listening on :8080")
-	log.Fatal(http.ListenAndServe(":8080", handler))
+	}
 }
